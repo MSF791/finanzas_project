@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-4-jc#2)x36r)k!d6(ful9skod9#y70b4g@@#8qz1u3spy@^teg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -139,7 +139,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://finanzas-project-5xc8.onrender.com",
+]
 
 if DEBUG == False:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
