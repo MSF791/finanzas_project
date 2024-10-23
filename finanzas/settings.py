@@ -142,6 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://finanzas-project-5xc8.onrender.com",
+    "https://gestionfinanzasapp.netlify.app"
 ]
 
 if DEBUG == False:
