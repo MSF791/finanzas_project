@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/token/', ObtainJwtToken.as_view(), name='obtain_jwt_token'),
     path('api/v1/token/load/', LoadJwtToken.as_view(), name='load_jwt_token'),
+    path('api/v1/recordatorio/', NotificationBill.as_view(), name="notification_bill")
 ]

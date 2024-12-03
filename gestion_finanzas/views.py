@@ -3,10 +3,11 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework import status
-from .utils import generate_jwt_token, decode_jwt_token
+from .utils import generate_jwt_token, decode_jwt_token, enviar_mensaje
 from .serializer import *
 from .models import *
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+from datetime import datetime
 
 class UsuarioView(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer
@@ -39,7 +40,7 @@ class ObtainJwtToken(APIView):
         try:
             user = Usuario.objects.get(username=username, password=password)
             token = generate_jwt_token(user)
-            return Response({'token': token}, status=status.HTTP_200_OK)
+            return Response({'token': token, 'id':user.id}, status=status.HTTP_200_OK)
         except Usuario.DoesNotExist:
             return Response({'error':'Credenciales no válidas'}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -55,3 +56,23 @@ class LoadJwtToken(APIView):
             return Response({"error": "El token es inválido"}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class NotificationBill(APIView):
+    def post(self, request):
+        try:
+            user_id = request.data["id"]
+            facturas = Factura.objects.filter(usuario=user_id)
+            usuario = Usuario.objects.get(id=user_id)
+            email = usuario.email
+            # Fecha actual
+            fecha_actual = datetime.now().date()
+            for factura in facturas:
+                # Calcula la diferencia de días entre la fecha actual y la fecha de vencimiento
+                diferencia_dias = (factura.fecha_vencimiento - fecha_actual).days
+                if not factura.pagada and diferencia_dias == 2:
+                    factura_mensaje = {"nombre":factura.nombre, "cantidad":factura.cantidad, "fecha":factura.fecha_vencimiento}
+                    enviar_mensaje(email, factura_mensaje)
+        except Exception as e:
+            print(f'ha ocurrido un error {e}')
+        
+        return Response(status=status.HTTP_200_OK)

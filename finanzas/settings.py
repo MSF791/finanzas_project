@@ -86,14 +86,14 @@ WSGI_APPLICATION = 'finanzas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('dbname'),
-        'USER': os.getenv('user'),
-        'PASSWORD': os.getenv('password'),
-        'HOST': os.getenv('host'),
-        'PORT': os.getenv('port'),
-        'OPTIONS': {
-            'sslmode': 'require',
-        }
+        'NAME': os.getenv('local_dbname'),
+        'USER': os.getenv('local_user'),
+        'PASSWORD': os.getenv('local_password'),
+        'HOST': 'localhost',
+        'PORT': os.getenv('local_port'),
+        # 'OPTIONS': {
+        #     'sslmode': 'require',
+        # }
     }
 }
 
@@ -141,9 +141,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://finanzas-project-5xc8.onrender.com",
     "https://gestionfinanzasapp.netlify.app"
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'modasinfronteras2@gmail.com'
+EMAIL_HOST_PASSWORD = 'rmed bgyz lixe msiu'
 
 if DEBUG == False:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
