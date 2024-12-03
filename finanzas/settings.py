@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +31,7 @@ SECRET_KEY = 'django-insecure-4-jc#2)x36r)k!d6(ful9skod9#y70b4g@@#8qz1u3spy@^teg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [".vercel.app", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -77,23 +78,36 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'finanzas.wsgi.application'
+WSGI_APPLICATION = 'finanzas.wsgi.app'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('local_dbname'),
+#         'USER': os.getenv('local_user'),
+#         'PASSWORD': os.getenv('local_password'),
+#         'HOST': 'localhost',
+#         'PORT': os.getenv('local_port'),
+#         # 'OPTIONS': {
+#         #     'sslmode': 'require',
+#         # }
+#     }
+# }
+
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('local_dbname'),
-        'USER': os.getenv('local_user'),
-        'PASSWORD': os.getenv('local_password'),
-        'HOST': 'localhost',
-        'PORT': os.getenv('local_port'),
-        # 'OPTIONS': {
-        #     'sslmode': 'require',
-        # }
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
     }
 }
 
@@ -141,7 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://gestionfinanzasapp.netlify.app"
+    "https://gestionfinanzasapp.netlify.app",
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
